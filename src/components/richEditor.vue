@@ -2,10 +2,30 @@
   <div class="rich-editor">
       <div class="editor-toolbar">
           <div class="editor-font editor-format">
-              <span class="font-head" @click.stop="clickFontFormat">{{fontFormatNow}}</span>
+              <span class="font-head" @click.stop="clickFontFormat">
+                {{fontFormatNow}}
+                <!-- <svg viewBox="0 0 18 18">
+                  <polygon class="ql-stroke" points="7 11 9 13 11 11 7 11"></polygon>
+                  <polygon class="ql-stroke" points="7 7 9 5 11 7 7 7"></polygon>
+                </svg> -->
+              </span>
               <div class="font-options" v-show="fontOptionsVisible">
                   <span @click="toggleFont(font.value)" v-for="(font, index) of allFonts" :value="font.name" :class="font.className" :key="index">{{font.value}}</span>
               </div>
+          </div>
+          <div class="edit-style editor-format">
+              <button class="edit-btn">
+                  <span>B</span>
+              </button>
+              <button class="edit-btn">
+                  <span style="font-style: italic; text-transform:uppercase">I</span>
+              </button>
+              <button class="edit-btn">
+                  <span style="text-decoration:underline">U</span>
+              </button>
+              <button class="edit-btn">
+                  <span style="text-decoration:line-through">S</span>
+              </button>
           </div>
       </div>
       <div class="editor-content" ref="content" @keyup.enter="toggleNewLine" @click.stop="clickEditContent" contentEditable="true">
@@ -26,6 +46,15 @@ export default {
         {name: 'Heading5', value: 'Heading5', className: 'Heading5'},
         {name: 'Heading6', value: 'Heading6', className: 'Heading6'}
       ],
+      fontCosTags: {
+        Normal: 'div',
+        Heading1: 'h1',
+        Heading2: 'h2',
+        Heading3: 'h3',
+        Heading4: 'h4',
+        Heading5: 'h5',
+        Heading6: 'h6'
+      },
       fontOptionsVisible: false,
       fontFormatNow: 'Normal'
     };
@@ -45,6 +74,9 @@ export default {
     toggleFont (font) {
       this.clickFontFormat();
       this.fontFormatNow = font;
+      console.log('现在的位置', this.getSelectorRange());
+      this.$refs.content.innerHTML = this.wrapTagsHtml(this.$refs.content.innerText, this.fontCosTags[this.fontFormatNow]);
+      console.log('被包裹的元素', this.wrapTagsHtml(this.$refs.content.innerText, this.fontCosTags[this.fontFormatNow]));
     },
     // 点击的时候的动作
     clickEditContent () {
@@ -90,6 +122,13 @@ export default {
         .editor-font {
             position: relative;
         }
+        .font-head {
+            position: relative;
+            & > svg {
+                position: absolute;
+                right: 0;
+            }
+        }
         .font-options {
             padding: 4px 8px;
             position: absolute;
@@ -124,6 +163,15 @@ export default {
         overflow-y: auto;
         padding: 12px 15px;
         text-align: left;
+    }
+    .edit-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        &:hover {
+            color: #06c;
+        }
     }
 }
 </style>

@@ -12,4 +12,10 @@ function getSelectorRange () {
   return range;
 };
 
-export { getSelectorRange };
+function wrapTagsHtml (value, tag) {
+  if (value && tag) {
+    return `<${tag}>${value}</${tag}>`;
+  }
+}
+
+export { getSelectorRange, wrapTagsHtml };
