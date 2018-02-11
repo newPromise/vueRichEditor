@@ -14,8 +14,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "css-loader": "^0.28.9",
+    "less": "^2.7.3",
+    "less-loader": "^4.0.5",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
+    "vue-style-loader": "^3.1.2",
     "vue2-editor": "^2.4.2"
   },
   "devDependencies": {

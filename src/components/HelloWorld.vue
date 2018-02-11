@@ -1,27 +1,30 @@
 <template>
   <div class="hello">
     <vue-editor v-model="content"></vue-editor>
+    <rich-editor></rich-editor>
   </div>
 </template>
 
 <script>
-import { VueEditor, Quill } from 'vue2-editor'
+import { VueEditor, Quill } from 'vue2-editor';
+import richEditor from './richEditor';
 export default {
   name: 'HelloWorld',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
       content: '<h1>hello</h1>'
-    }
+    };
   },
   created () {
-    console.log('vueEditor', VueEditor)
+    console.log('vueEditor', VueEditor);
   },
   components: {
+    richEditor,
     VueEditor,
     Quill
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
