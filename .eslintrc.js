@@ -26,5 +26,7 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     "semi": ["error", "always"], // 结尾分号
+    "no-tabs": 0,
+    "no-mixed-spaces-and-tabs": 0
   }
 }
