@@ -6,11 +6,11 @@
                 {{fontFormatNow}}
               </span>
               <div class="font-options" v-show="fontOptionsVisible">
-                  <span @click="toggleFont(font.value)" v-for="(font, index) of allFonts" :value="font.name" :class="font.className" :key="index">{{font.value}}</span>
+                  <span @click="toggleFont(font)" v-for="(font, index) of allFonts" :value="font.name" :class="font.className" :key="index">{{font.name}}</span>
               </div>
           </div>
           <div class="edit-style editor-format">
-               <button class="edit-btn">
+               <button class="edit-btn" @click.stop="makeBold">
                    <svg class="icon" width="20px" height="100%" line-height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M807.384615 374.153846c0-118.153846-94.523077-216.615385-206.76923-216.615384H275.692308c-21.661538 0-39.384615 17.723077-39.384616 39.384615v649.846154c0 21.661538 17.723077 39.384615 39.384616 39.384615h324.923077C712.861538 886.153846 807.384615 787.692308 807.384615 669.538462c0-57.107692-21.661538-108.307692-57.107692-147.692308 35.446154-39.384615 57.107692-90.584615 57.107692-147.692308zM600.615385 748.307692H374.153846v-157.538461h226.461539c37.415385 0 70.892308 37.415385 70.892307 78.769231s-33.476923 78.769231-70.892307 78.76923z m0-295.384615H374.153846v-157.538462h226.461539c37.415385 0 70.892308 37.415385 70.892307 78.769231s-33.476923 78.769231-70.892307 78.769231z" /></svg>
               </button>
               <button class="edit-btn">
@@ -50,20 +50,15 @@
 
 <script>
 import textAlign from './textAlign';
+import tools from '../assets/js/tool.js';
 export default {
   data () {
     return {
       allFonts: [
-        {name: 'Normal', value: 'Normal', className: 'Normal'},
-        {name: 'Heading1', value: 'Heading1', className: 'Heading1'},
-        {name: 'Heading2', value: 'Heading2', className: 'Heading2'},
-        {name: 'Heading3', value: 'Heading3', className: 'Heading3'},
-        {name: 'Heading4', value: 'Heading4', className: 'Heading4'},
-        {name: 'Heading5', value: 'Heading5', className: 'Heading5'},
-        {name: 'Heading6', value: 'Heading6', className: 'Heading6'}
+        {name: 'Normal', value: 'Normal', className: 'Normal'}
       ],
       fontCosTags: {
-        Normal: 'div',
+        Normal: 'span',
         Heading1: 'h1',
         Heading2: 'h2',
         Heading3: 'h3',
@@ -85,20 +80,46 @@ export default {
   methods: {
     init () {
       this.contentValue = this.$refs.content.innerHTML;
+      this.initData();
+    },
+    initData () {
+      for (let i = 1; i < 6; i++) {
+        const obj = {
+          name: `Heading${i}`,
+          value: `h${i}`,
+          className: `Heading${i}`
+        };
+        this.allFonts.push(obj);
+        console.log(i);
+      }
     },
     clickFontFormat () {
       this.fontOptionsVisible = !this.fontOptionsVisible;
     },
     toggleFont (font) {
       this.clickFontFormat();
-      this.fontFormatNow = font;
-      this.$refs.content.innerHTML = this.wrapTagsHtml(this.$refs.content.innerText, this.fontCosTags[this.fontFormatNow]);
+      this.fontFormatNow = font.name;
+      this.changeHeading(font);
+    //   this.$refs.content.innerHTML = this.wrapTagsHtml(this.$refs.content.innerText, this.fontCosTags[this.fontFormatNow]);
     },
     // 点击的时候的动作
     clickEditContent () {
     },
+    changeHeading (font) {
+      console.log('el', document.getElementsByClassName('editor-content'));
+      tools.getSelection();
+      const textData = tools.getSelection(document.getElementsByClassName('editor-content')[0]).selectData;
+      if (font.value === 'Normal') {
+      } else {
+        console.log('textdata', textData);
+      }
+    },
     toggleNewLine () {
       this.contentValue = this.$refs.content.innerHTML;
+    },
+    makeBold () {
+    //   console.log('光标', tools.getSelection().text);
+    //   console.log('选中对象', tools.getSelection().selectData);
     }
   }
 };
@@ -175,7 +196,6 @@ export default {
     }
     .editor-content {
         min-height: 200px;
-        font-size: 20px;
         overflow-y: auto;
         padding: 12px 15px;
         text-align: left;
