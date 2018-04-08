@@ -43,7 +43,7 @@
               </button>
           </div>
       </div>
-      <div class="editor-content" ref="content" @keyup.enter="toggleNewLine" @click.stop="clickEditContent" contentEditable="true">
+      <div class="editor-content" ref="content" @keyup.enter="toggleNewLine" @keyup="clickEditContent" contentEditable="true">
       </div>
   </div>
 </template>
@@ -104,14 +104,24 @@ export default {
     },
     // 点击的时候的动作
     clickEditContent () {
+      const node = tools.getSelection(document.getElementsByClassName('editor-content')[0]);
+      const content = document.getElementsByClassName('editor-content')[0];
+      let focusNode = tools.selectObj.focusNode;
+      if (focusNode.nodeType === 1) {
+          focusNode.innerHTML = focusNode.innerHTML.replace('div', 'h1');
+      } else {
+          focusNode = `<div>${focusNode}</div>`;
+      }
+      console.log('focusNode', focusNode);
+    //   console.log("tools", tools.selectObj.focusNode);
+    //   tools.selectObj.focusNode.innerHTML = tools.selectObj.focusNode.innerHTML.replace('div', 'h1');
+      console.log('textData', tools.selectObj);
     },
     changeHeading (font) {
-      console.log('el', document.getElementsByClassName('editor-content'));
-      tools.getSelection();
-      const textData = tools.getSelection(document.getElementsByClassName('editor-content')[0]).selectData;
+      console.log('tools', tools.selectData);
       if (font.value === 'Normal') {
       } else {
-        console.log('textdata', textData);
+        console.log('textdata');
       }
     },
     toggleNewLine () {

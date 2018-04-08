@@ -30,7 +30,6 @@ tools.getSelectorRange = function (element) {
 
 // 替换选中的文字
 tools.getSelection = function (element) {
-  console.log('name', this.name);
   this.selectObj = tools.getSelectorRange().select;
   if (this.selectObj.baseNode.parentElement === element) {
     this.baseOffset = this.selectObj.baseNode.baseOffset - 1;
