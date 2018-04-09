@@ -56,4 +56,10 @@ tools.wrapTagsHtml = function (value, tag) {
   }
 };
 
+tools.command = function (commandName, valueArgument) {
+  console.log("command");
+  return document.execCommand(commandName, true, valueArgument);
+  // return commandFn;
+}
+
 export default tools;
