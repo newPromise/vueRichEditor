@@ -8,15 +8,20 @@ const tools = {
   selectData: ''
 };
 
-tools.getSelectorRange = function (element) {
+tools.getSelector = function (element) {
   let text;
   let range;
   let select;
+  let rect;
   if (window.getSelection) {
     // 对于 window.getSelection 方法
     // 表示用户选择的文本范围或者光标位置
     select = window.getSelection();
+    // document.execCommand("defaultParagraphSeparator", false, "");
     text = select.toString();
+    range = select.getRangeAt(0).cloneRange();
+    range.collapse(true);
+    rect = range.getClientRects()[0];
     // range = select.getRangeAt(0);
   } else if (document.selection) {
     range = document.selection.createRange();
@@ -24,7 +29,9 @@ tools.getSelectorRange = function (element) {
   }
   return {
     text,
-    select
+    select,
+    range,
+    rect
   };
 };
 
@@ -56,10 +63,12 @@ tools.wrapTagsHtml = function (value, tag) {
   }
 };
 
-tools.command = function (commandName, valueArgument) {
-  console.log("command");
-  return document.execCommand(commandName, true, valueArgument);
-  // return commandFn;
+tools.command = function (commandName) {
+  return document.execCommand(commandName, true);
+}
+// 获取选中焦点的位置
+tools.getFocusPos = function () {
+  console.log("end", tools.getSelectorRange().select);
 }
 
 export default tools;

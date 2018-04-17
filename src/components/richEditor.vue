@@ -13,10 +13,10 @@
                <button class="edit-btn" @click.stop="makeBold">
                    <svg class="icon" width="20px" height="100%" line-height="100%" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M807.384615 374.153846c0-118.153846-94.523077-216.615385-206.76923-216.615384H275.692308c-21.661538 0-39.384615 17.723077-39.384616 39.384615v649.846154c0 21.661538 17.723077 39.384615 39.384616 39.384615h324.923077C712.861538 886.153846 807.384615 787.692308 807.384615 669.538462c0-57.107692-21.661538-108.307692-57.107692-147.692308 35.446154-39.384615 57.107692-90.584615 57.107692-147.692308zM600.615385 748.307692H374.153846v-157.538461h226.461539c37.415385 0 70.892308 37.415385 70.892307 78.769231s-33.476923 78.769231-70.892307 78.76923z m0-295.384615H374.153846v-157.538462h226.461539c37.415385 0 70.892308 37.415385 70.892307 78.769231s-33.476923 78.769231-70.892307 78.769231z" /></svg>
               </button>
-              <button class="edit-btn">
+              <button class="edit-btn" @click.stop="makeItalic">
                   <svg class="icon" width="20px" height="20px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M748.307692 242.215385V216.615385c0-21.661538-17.723077-39.384615-39.384615-39.384616H433.230769c-21.661538 0-39.384615 17.723077-39.384615 39.384616v39.384615c0 21.661538 17.723077 39.384615 39.384615 39.384615 33.476923 0 59.076923 31.507692 51.2 63.015385L413.538462 704.984615c-5.907692 25.6-27.569231 43.323077-51.2 43.323077H315.076923c-21.661538 0-39.384615 17.723077-39.384615 39.384616v39.384615c0 21.661538 17.723077 39.384615 39.384615 39.384615h275.692308c21.661538 0 39.384615-17.723077 39.384615-39.384615v-39.384615c0-21.661538-17.723077-39.384615-39.384615-39.384616-33.476923 0-59.076923-31.507692-51.2-63.015384L610.461538 338.707692c5.907692-25.6 27.569231-43.323077 51.2-43.323077h33.476924c29.538462 0 53.169231-23.630769 53.16923-53.16923z" /></svg>
               </button>
-              <button class="edit-btn">
+              <button class="edit-btn" @click.stop="makeUnderline">
                   <svg class="icon" width="20px" color="#369" height="20.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M92.23 888.663h830.613v69.22H92.23v-69.22z m0-830.611h357.717v54.425l-77.262 5.442-17.642 15.782v390.222c0 74.38 15.817 127.535 47.452 159.465 31.635 31.925 83.545 47.895 155.74 47.895 66.515 0 114.675-16.965 144.485-50.89 29.81-33.93 44.715-89.525 44.715-166.81V138.055l-18.86-19.047-79.695-6.53V58.052h282.889v54.425l-76.05 6.53-17.035 19.047v386.959c0 103.405-25.955 178.33-77.87 224.769-51.91 46.445-135.665 69.665-251.247 69.665-60.435 0-113.462-7.895-159.087-23.675-45.627-15.785-81.42-38.365-107.377-67.76-19.872-23.22-33.967-49.8-42.28-79.73-8.315-29.935-12.472-72.84-12.472-128.715V133.702l-17.642-15.782-78.477-5.442V58.052z"  /></svg>
               </button>
               <button class="edit-btn">
@@ -43,7 +43,7 @@
               </button>
           </div>
       </div>
-      <div class="editor-content" ref="content" @keyup.enter="toggleNewLine" @keyup="clickEditContent" contentEditable="true">
+      <div class="editor-content" ref="content"  @click="clickEditContent" contentEditable="true">
       </div>
   </div>
 </template>
@@ -67,7 +67,13 @@ export default {
         Heading6: 'h6'
       },
       fontOptionsVisible: false,
-      fontFormatNow: 'Normal'
+      fontFormatNow: 'Normal',
+      slectRange: "",
+      status: {
+          bold: false,
+          italic: false
+      },
+      editor: ""
     };
   },
   components: {
@@ -80,6 +86,7 @@ export default {
   methods: {
     init () {
       this.contentValue = this.$refs.content.innerHTML;
+      this.editor = document.getElementsByClassName("editor-content")[0];
       this.initData();
     },
     initData () {
@@ -100,37 +107,45 @@ export default {
       this.clickFontFormat();
       this.fontFormatNow = font.name;
       this.changeHeading(font);
-    //   this.$refs.content.innerHTML = this.wrapTagsHtml(this.$refs.content.innerText, this.fontCosTags[this.fontFormatNow]);
+    },
+    // 加粗效果
+    makeBold () {
+      this.status.bold = !this.status.bold;
+      document.getElementsByClassName("editor-content")[0].focus();      
+      tools.command("bold");
+    },
+    // 斜体
+    makeItalic () {
+        this.status.italic = !this.status.italic;
+        this.editor.focus();
+        tools.command("italic");
+    },
+    // 下划线
+    makeUnderline () {
+        this.status.underline = !this.status.underline;
+        this.editor.focus();
+        tools.command("underline");
     },
     // 点击的时候的动作
     clickEditContent () {
-      const node = tools.getSelection(document.getElementsByClassName('editor-content')[0]);
-      const content = document.getElementsByClassName('editor-content')[0];
-      let focusNode = tools.selectObj.focusNode;
-      if (focusNode.nodeType === 1) {
-          focusNode.innerHTML = focusNode.innerHTML.replace('div', 'h1');
-      } else {
-          focusNode = `<div>${focusNode}</div>`;
-      }
-      console.log('focusNode', focusNode);
-    //   console.log("tools", tools.selectObj.focusNode);
-    //   tools.selectObj.focusNode.innerHTML = tools.selectObj.focusNode.innerHTML.replace('div', 'h1');
-      console.log('textData', tools.selectObj);
+    //   const 
+    //   console.log("select", tools.getSelector().select.);
+    //   console.log(tools.command("bold", true));
+    // //   console.log(document.getElementsByClassName('editor-content')[0].selectionStart);
+    // //   console.log(tools.getSelectorRange().rect);
+    // //   console.log("createdRange", window.getSelection().getRangeAt(0));
+    // //   tools.getFocusPos();
+    // //   tools.getSelection(document.getElementsByClassName('editor-content')[0]);//   const 
+    //   console.log("select", tools.getSelector().select.);
+    //   console.log(tools.command("bold", true));
+    // //   console.log(document.getElementsByClassName('editor-content')[0].selectionStart);
+    // //   console.log(tools.getSelectorRange().rect);
+    // //   console.log("createdRange", window.getSelection().getRangeAt(0));
+    // //   tools.getFocusPos();
+    // //   tools.getSelection(document.getElementsByClassName('editor-content')[0]);
     },
     changeHeading (font) {
-      console.log('tools', tools.selectData);
-      if (font.value === 'Normal') {
-      } else {
-        console.log('textdata');
-      }
     },
-    toggleNewLine () {
-      this.contentValue = this.$refs.content.innerHTML;
-    },
-    makeBold () {
-    //   console.log('光标', tools.getSelection().text);
-    //   console.log('选中对象', tools.getSelection().selectData);
-    }
   }
 };
 </script>
