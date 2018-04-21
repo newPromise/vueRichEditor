@@ -63,8 +63,8 @@ tools.wrapTagsHtml = function (value, tag) {
   }
 };
 
-tools.command = function (commandName) {
-  return document.execCommand(commandName, true);
+tools.command = function (commandName,tag) {
+  return document.execCommand(commandName, true, tag);
 }
 // 获取选中焦点的位置
 tools.getFocusPos = function () {
