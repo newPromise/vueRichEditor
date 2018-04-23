@@ -68,7 +68,31 @@ tools.command = function (commandName,tag) {
 }
 // 获取选中焦点的位置
 tools.getFocusPos = function () {
-  console.log("end", tools.getSelectorRange().select);
+  console.log("end", tools.getSelector().select);
+}
+
+tools.SetCaretPosition = function (el, pos) {
+  for (let node of el.childNodes) {
+    if (node.nodeType == 3) {
+      if (node.length >= pos) {
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.setStart(node, pos);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        return -1;
+      } else {
+        pos -= node.length;
+      }
+    } else {
+      pos = this.SetCaretPosition(node, pos);
+      if (pos === -1) {
+        return -1;
+      }
+    }
+    return pos;
+  }
 }
 
 export default tools;

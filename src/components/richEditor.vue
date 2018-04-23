@@ -43,8 +43,7 @@
               </button>
           </div>
       </div>
-      <div class="editor-content" ref="content"  @click="clickEditContent" contentEditable="true">
-          <div></div>
+      <div class="editor-content" id="editor" ref="content"  @keydown="clickEditContent" contentEditable="true">
       </div>
   </div>
 </template>
@@ -93,19 +92,19 @@ export default {
   },
   methods: {
     init () {
-      this.contentValue = this.$refs.content.innerHTML;
-      this.editor = document.getElementsByClassName("editor-content")[0];
-      this.initData();
+        this.contentValue = this.$refs.content.innerHTML;
+        this.editor = document.getElementsByClassName("editor-content")[0];
+        this.initData();
     },
     initData () {
-      for (let i = 1; i < 6; i++) {
-        const obj = {
-          name: `Heading${i}`,
-          value: `h${i}`,
-          className: `Heading${i}`
-        };
-        this.allFonts.push(obj);
-      }
+        for (let i = 1; i < 6; i++) {
+            const obj = {
+            name: `Heading${i}`,
+            value: `h${i}`,
+            className: `Heading${i}`
+            };
+            this.allFonts.push(obj);
+        }
     },
     clickFontFormat () {
       this.fontOptionsVisible = !this.fontOptionsVisible;
@@ -118,10 +117,9 @@ export default {
     },
     // 加粗效果
     makeBold (event) {
-      console.log("被点击到的事件", event);
-      this.status.bold = !this.status.bold;
-      document.getElementsByClassName("editor-content")[0].focus();      
-      tools.command("bold");
+        this.status.bold = !this.status.bold;
+        document.getElementsByClassName("editor-content")[0].focus();      
+        tools.command("bold");
     },
     // 斜体
     makeItalic () {
@@ -182,6 +180,17 @@ export default {
     },
     // 点击的时候的动作
     clickEditContent () {
+        const selectNode = tools.getSelector().select;
+        const selectParentNode = selectNode.focusNode.parentNode;
+        console.log("selectNode", selectNode.focusNode.parentNode.getAttribute("id"));
+        if (selectParentNode.getAttribute("id") === "editor") {
+            const newNode = document.createElement("div");
+            newNode.innerText = selectNode.focusNode.nodeValue;
+            console.log("newNode", newNode);
+            selectParentNode.replaceChild(newNode, selectParentNode.childNodes[0]);
+        }
+        tools.SetCaretPosition(selectNode.focusNode, 1);
+        console.log("选中元素", selectNode, selectNode.focusNode);
     //   const 
     //   console.log("select", tools.getSelector().select.);
     //   console.log(tools.command("bold", true));
