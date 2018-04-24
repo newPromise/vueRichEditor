@@ -71,6 +71,10 @@ tools.getFocusPos = function () {
   console.log("end", tools.getSelector().select);
 }
 
+tools.setCaret = function (node, offset) {
+  this.getSelector().select.collapse(node, offset);
+}
+
 tools.SetCaretPosition = function (el, pos) {
   for (let node of el.childNodes) {
     if (node.nodeType == 3) {
