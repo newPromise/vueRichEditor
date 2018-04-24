@@ -71,6 +71,25 @@ tools.getFocusPos = function () {
   console.log("end", tools.getSelector().select);
 }
 
+tools.setCaret = function (node, offset) {
+  this.getSelector().select.collapse(node, offset);
+}
+
+tools.showTheTag = function (el) {
+  const tagsArray = [];
+  console.log("el", el);
+  const searchTags = (el) => {
+    if (el.nodeType === 3 || el.getAttribute("id") !== "editor") {
+      if (el.nodeType !== 3) {
+        tagsArray.push(el.tagName);
+      }
+      searchTags(el.parentNode);
+    }
+  };
+  searchTags(el);
+  return tagsArray;  
+}
+
 tools.SetCaretPosition = function (el, pos) {
   for (let node of el.childNodes) {
     if (node.nodeType == 3) {

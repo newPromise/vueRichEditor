@@ -43,7 +43,7 @@
               </button>
           </div>
       </div>
-      <div class="editor-content" id="editor" ref="content"  @keydown="clickEditContent" contentEditable="true">
+      <div class="editor-content" id="editor" ref="content"  @click="whenClickEditor"  @keyup.once="resetFirstPara" contentEditable="true">
       </div>
   </div>
 </template>
@@ -80,6 +80,13 @@ export default {
           quote: false,
           code: false
       },
+      // 获取到的标签与应该显示的状态
+      tagStatusMap: {
+          B: "bold",
+          I: "italic",
+          U: "underline",
+          STRIKE: "delete"
+      },
       editor: ""
     };
   },
@@ -114,6 +121,7 @@ export default {
         this.fontFormatNow = font.name;
         this.editor.focus();
         tools.command("formatBlock", font.value);
+        this.setCaretBlockEnd();
     },
     // 加粗效果
     makeBold (event) {
@@ -165,7 +173,7 @@ export default {
         if (this.status.quote) {
             tools.command("formatBlock", "BLOCKQUOTE");            
         } else {
-            tools.command("formatBlock", "div");            
+            tools.command("formatBlock", "p");            
         }
     },
     // 添加代码片段
@@ -175,22 +183,41 @@ export default {
         if (this.status.code) {
             tools.command("formatBlock", "PRE");
         } else {
-            tools.command("formatBlock", "div");
+            tools.command("formatBlock", "p");
         }
+    },
+    // 将光标设置到元素的末尾
+    setCaretBlockEnd() {
+        const focusNode = tools.getSelector().select.focusNode;
+        const offsetLen = focusNode.length;
+        tools.setCaret(focusNode, offsetLen);
+    },
+    resetFirstPara() {
+        const focusNode = tools.getSelector().select.focusNode;
+        if (focusNode.nodeType === 3) {
+            tools.command("formatBlock", "p");
+        }
+    },
+    resetStatus() {
+        Object.keys(this.status).forEach(key => this.status[key] = false);
+    },
+    // 编辑器点击动作
+    whenClickEditor() {
+        console.log("click");
+        const focusNode = tools.getSelector().select.focusNode;
+        const contentTags = tools.showTheTag(focusNode);
+        this.resetStatus();
+        contentTags.forEach(tag => this.status[this.tagStatusMap[tag]] = true);
+        console.log("array", focusNode, tools.showTheTag(focusNode));
     },
     // 点击的时候的动作
     clickEditContent () {
-        const selectNode = tools.getSelector().select;
-        const selectParentNode = selectNode.focusNode.parentNode;
-        console.log("selectNode", selectNode.focusNode.parentNode.getAttribute("id"));
-        if (selectParentNode.getAttribute("id") === "editor") {
-            const newNode = document.createElement("div");
-            newNode.innerText = selectNode.focusNode.nodeValue;
-            console.log("newNode", newNode);
-            selectParentNode.replaceChild(newNode, selectParentNode.childNodes[0]);
-        }
-        tools.SetCaretPosition(selectNode.focusNode, 1);
-        console.log("选中元素", selectNode, selectNode.focusNode);
+        // if (selectNode.focusNode.nodeType === 3 && selectParentNode.getAttribute("id") === "editor") {
+        //     const newNode = document.createElement("div");
+        //     newNode.innerText = selectNode.focusNode.nodeValue;
+        //     selectParentNode.replaceChild(newNode, selectParentNode.childNodes[0]);
+        //     // tools.setCaret(document.getElementById("editor").childNodes[0], 1);
+        // }
     //   const 
     //   console.log("select", tools.getSelector().select.);
     //   console.log(tools.command("bold", true));
