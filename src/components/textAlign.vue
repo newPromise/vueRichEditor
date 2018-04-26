@@ -8,7 +8,7 @@
 
 <script type="text/ecmascript-6">
 export default {
-  name: 'textAlign',
+  name: "textAlign",
   data () {
 	  return {
       typeNumber: 4

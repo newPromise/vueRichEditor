@@ -27,6 +27,8 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     "semi": ["error", "always"], // 结尾分号
     "no-tabs": 0,
+    "indent": ["error", 2],
+    "quotes": ["error", "double"],
     "no-mixed-spaces-and-tabs": 0
   }
 }

@@ -1,11 +1,11 @@
 const tools = {
-  selectObj: '',
+  selectObj: "",
   baseOffset: 0,
   extentOffset: 0,
   leftPosIndex: 0,
   rightPosIndex: 0,
-  focusParentNode: '',
-  selectData: ''
+  focusParentNode: "",
+  selectData: ""
 };
 
 tools.getSelector = function (element) {
@@ -63,17 +63,17 @@ tools.wrapTagsHtml = function (value, tag) {
   }
 };
 
-tools.command = function (commandName,tag) {
+tools.command = function (commandName, tag) {
   return document.execCommand(commandName, true, tag);
-}
+};
 // 获取选中焦点的位置
 tools.getFocusPos = function () {
   console.log("end", tools.getSelector().select);
-}
+};
 
 tools.setCaret = function (node, offset) {
   this.getSelector().select.collapse(node, offset);
-}
+};
 
 tools.showTheTag = function (el) {
   const tagsArray = [];
@@ -87,12 +87,12 @@ tools.showTheTag = function (el) {
     }
   };
   searchTags(el);
-  return tagsArray;  
-}
+  return tagsArray;
+};
 
 tools.SetCaretPosition = function (el, pos) {
   for (let node of el.childNodes) {
-    if (node.nodeType == 3) {
+    if (node.nodeType === 3) {
       if (node.length >= pos) {
         const range = document.createRange();
         const sel = window.getSelection();
@@ -112,6 +112,6 @@ tools.SetCaretPosition = function (el, pos) {
     }
     return pos;
   }
-}
+};
 
 export default tools;

@@ -6,18 +6,18 @@
 </template>
 
 <script>
-import { VueEditor, Quill } from 'vue2-editor';
-import richEditor from './richEditor';
+import { VueEditor, Quill } from "vue2-editor";
+import richEditor from "./richEditor";
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
-      content: '<h1>hello</h1>'
+      msg: "Welcome to Your Vue.js App",
+      content: ""
     };
   },
   created () {
-    console.log('vueEditor', VueEditor);
+    console.log("", VueEditor);
   },
   components: {
     richEditor,

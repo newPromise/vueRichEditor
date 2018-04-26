@@ -43,49 +43,47 @@
               </button>
           </div>
       </div>
-      <div class="editor-content" id="editor" ref="content"  @click="whenClickEditor"  @keyup.once="resetFirstPara" contentEditable="true">
+      <div class="editor-content" id="editor" ref="content"  @click="whenClickEditor"  @keyup.once="resetFirstPara" @keyup.enter="resetStatus" contentEditable="true">
       </div>
   </div>
 </template>
 
 <script>
-import textAlign from './textAlign';
-import tools from '../assets/js/tool.js';
+import textAlign from "./textAlign";
+import tools from "../assets/js/tool.js";
 export default {
   data () {
     return {
-      allFonts: [
-        {name: 'Normal', value: 'Normal', className: 'Normal'}
-      ],
+      allFonts: [{ name: "Normal", value: "p", className: "Normal" }],
       fontCosTags: {
-        Normal: 'span',
-        Heading1: 'h1',
-        Heading2: 'h2',
-        Heading3: 'h3',
-        Heading4: 'h4',
-        Heading5: 'h5',
-        Heading6: 'h6'
+        Normal: "p",
+        Heading1: "h1",
+        Heading2: "h2",
+        Heading3: "h3",
+        Heading4: "h4",
+        Heading5: "h5",
+        Heading6: "h6"
       },
       fontOptionsVisible: false,
-      fontFormatNow: 'Normal',
+      fontFormatNow: "Normal",
       slectRange: "",
       status: {
-          bold: false,
-          italic: false,
-          underline: false,
-          delete: false,
-          left: false,
-          center: false,
-          right: false,
-          quote: false,
-          code: false
+        bold: false,
+        italic: false,
+        underline: false,
+        delete: false,
+        left: false,
+        center: false,
+        right: false,
+        quote: false,
+        code: false
       },
       // 获取到的标签与应该显示的状态
       tagStatusMap: {
-          B: "bold",
-          I: "italic",
-          U: "underline",
-          STRIKE: "delete"
+        B: "bold",
+        I: "italic",
+        U: "underline",
+        STRIKE: "delete"
       },
       editor: ""
     };
@@ -99,246 +97,238 @@ export default {
   },
   methods: {
     init () {
-        this.contentValue = this.$refs.content.innerHTML;
-        this.editor = document.getElementsByClassName("editor-content")[0];
-        this.initData();
+      this.contentValue = this.$refs.content.innerHTML;
+      this.editor = document.getElementsByClassName("editor-content")[0];
+      this.initData();
     },
     initData () {
-        for (let i = 1; i < 6; i++) {
-            const obj = {
-            name: `Heading${i}`,
-            value: `h${i}`,
-            className: `Heading${i}`
-            };
-            this.allFonts.push(obj);
-        }
+      for (let i = 1; i < 6; i++) {
+        const obj = {
+          name: `Heading${i}`,
+          value: `h${i}`,
+          className: `Heading${i}`
+        };
+        this.allFonts.push(obj);
+      }
     },
     clickFontFormat () {
       this.fontOptionsVisible = !this.fontOptionsVisible;
     },
     toggleFont (font) {
-        this.clickFontFormat();
-        this.fontFormatNow = font.name;
-        this.editor.focus();
-        tools.command("formatBlock", font.value);
-        this.setCaretBlockEnd();
+      this.clickFontFormat();
+      this.fontFormatNow = font.name;
+      this.editor.focus();
+      tools.command("formatBlock", font.value);
+      this.setCaretBlockEnd();
     },
     // 加粗效果
     makeBold (event) {
-        this.status.bold = !this.status.bold;
-        document.getElementsByClassName("editor-content")[0].focus();      
-        tools.command("bold");
+      this.status.bold = !this.status.bold;
+      document.getElementsByClassName("editor-content")[0].focus();
+      tools.command("bold");
     },
     // 斜体
     makeItalic () {
-        this.status.italic = !this.status.italic;
-        this.editor.focus();
-        tools.command("italic");
+      this.status.italic = !this.status.italic;
+      this.editor.focus();
+      tools.command("italic");
     },
     // 下划线
     makeUnderline () {
-        this.status.underline = !this.status.underline;
-        this.editor.focus();
-        tools.command("underline");
+      this.status.underline = !this.status.underline;
+      this.editor.focus();
+      tools.command("underline");
     },
     // 删除线
     makeDelete () {
-        this.status.delete = !this.status.delete;
-        this.editor.focus();
-        tools.command("strikeThrough");
+      this.status.delete = !this.status.delete;
+      this.editor.focus();
+      tools.command("strikeThrough");
     },
     // 左对齐
     textLeft () {
-        this.status.left = !this.status.left;
-        this.editor.focus();
-        tools.command("justifyLeft");
+      this.status.left = !this.status.left;
+      this.editor.focus();
+      tools.command("justifyLeft");
     },
     // 文字居中
     textCenter () {
-        this.status.center = !this.status.center;
-        this.editor.focus();
-        tools.command("justifyCenter");
-        console.log("center");
+      this.status.center = !this.status.center;
+      this.editor.focus();
+      tools.command("justifyCenter");
     },
     // 右对齐
     textRight () {
-        this.status.right = !this.status.right;
-        this.editor.focus();
-        tools.command("justifyRight");
+      this.status.right = !this.status.right;
+      this.editor.focus();
+      tools.command("justifyRight");
     },
     // 添加引用效果
     addQuote () {
-        this.status.quote = !this.status.quote;
-        this.editor.focus();
-        if (this.status.quote) {
-            tools.command("formatBlock", "BLOCKQUOTE");            
-        } else {
-            tools.command("formatBlock", "p");            
-        }
+      this.status.quote = !this.status.quote;
+      this.editor.focus();
+      if (this.status.quote) {
+        tools.command("formatBlock", "BLOCKQUOTE");
+      } else {
+        tools.command("formatBlock", "p");
+      }
     },
     // 添加代码片段
     addCode () {
-        this.status.code = !this.status.code;
-        this.editor.focus();
-        if (this.status.code) {
-            tools.command("formatBlock", "PRE");
-        } else {
-            tools.command("formatBlock", "p");
-        }
+      this.status.code = !this.status.code;
+      this.editor.focus();
+      if (this.status.code) {
+        tools.command("formatBlock", "PRE");
+      } else {
+        tools.command("formatBlock", "p");
+      }
     },
     // 将光标设置到元素的末尾
-    setCaretBlockEnd() {
-        const focusNode = tools.getSelector().select.focusNode;
-        const offsetLen = focusNode.length;
-        tools.setCaret(focusNode, offsetLen);
+    setCaretBlockEnd () {
+      const focusNode = tools.getSelector().select.focusNode;
+      console.log("foucsNode", focusNode);
+      const offsetLen = focusNode.length;
+      tools.setCaret(focusNode, offsetLen);
     },
-    resetFirstPara() {
-        const focusNode = tools.getSelector().select.focusNode;
-        if (focusNode.nodeType === 3) {
-            tools.command("formatBlock", "p");
-        }
+    resetFirstPara () {
+      const focusNode = tools.getSelector().select.focusNode;
+      if (focusNode.nodeType === 3) {
+        tools.command("formatBlock", "p");
+      }
     },
-    resetStatus() {
-        Object.keys(this.status).forEach(key => this.status[key] = false);
+    resetStatus () {
+      Object.keys(this.status).forEach(key => {
+          if (this.status[key]) {
+              switch (key) {
+                case "bold":
+                  tools.command("bold");
+                  break;
+                case "italic":
+                  tools.command("italic");
+                  break;
+                case "underline":
+                  tools.command("underline");
+                  break;
+                case "delete":
+                  tools.command("strikeThrough");
+                  break;
+              }
+          }
+          this.status[key] = false;
+          this.fontFormatNow = "Normal";
+      });
     },
     // 编辑器点击动作
-    whenClickEditor() {
-        console.log("click");
-        const focusNode = tools.getSelector().select.focusNode;
-        const contentTags = tools.showTheTag(focusNode);
-        this.resetStatus();
-        contentTags.forEach(tag => this.status[this.tagStatusMap[tag]] = true);
-        console.log("array", focusNode, tools.showTheTag(focusNode));
+    whenClickEditor () {
+      const focusNode = tools.getSelector().select.focusNode;
+      const contentTags = tools.showTheTag(focusNode);
+      Object.keys(this.status).forEach(key => this.status[key] = false);
+      contentTags.forEach(tag => (this.status[this.tagStatusMap[tag]] = true));
     },
-    // 点击的时候的动作
-    clickEditContent () {
-        // if (selectNode.focusNode.nodeType === 3 && selectParentNode.getAttribute("id") === "editor") {
-        //     const newNode = document.createElement("div");
-        //     newNode.innerText = selectNode.focusNode.nodeValue;
-        //     selectParentNode.replaceChild(newNode, selectParentNode.childNodes[0]);
-        //     // tools.setCaret(document.getElementById("editor").childNodes[0], 1);
-        // }
-    //   const 
-    //   console.log("select", tools.getSelector().select.);
-    //   console.log(tools.command("bold", true));
-    // //   console.log(document.getElementsByClassName('editor-content')[0].selectionStart);
-    // //   console.log(tools.getSelectorRange().rect);
-    // //   console.log("createdRange", window.getSelection().getRangeAt(0));
-    // //   tools.getFocusPos();
-    // //   tools.getSelection(document.getElementsByClassName('editor-content')[0]);//   const 
-    //   console.log("select", tools.getSelector().select.);
-    //   console.log(tools.command("bold", true));
-    // //   console.log(document.getElementsByClassName('editor-content')[0].selectionStart);
-    // //   console.log(tools.getSelectorRange().rect);
-    // //   console.log("createdRange", window.getSelection().getRangeAt(0));
-    // //   tools.getFocusPos();
-    // //   tools.getSelection(document.getElementsByClassName('editor-content')[0]);
-    },
-    changeHeading (font) {
-    },
+    changeHeading (font) {}
   }
 };
 </script>
 <style lang="less">
 .rich-editor {
-    width: 100%;
-    height: 300px;
-    border: 1px solid black;
-    .Heading1 {
-        font-size: 2em;
+  width: 100%;
+  height: 300px;
+  border: 1px solid black;
+  .Heading1 {
+    font-size: 2em;
+  }
+  .Heading2 {
+    font-size: 1.5rem;
+  }
+  .Heading3 {
+    font-size: 1.17rem;
+  }
+  .Heading4 {
+    font-size: 1rem;
+  }
+  .Heading5 {
+    font-size: 0.83em;
+  }
+  .Heading6 {
+    font-size: 0.67em;
+  }
+  blockquote {
+    border-left: 2px solid gray;
+    padding-left: 12px;
+  }
+  .editor-toolbar {
+    text-align: center;
+    padding: 10px;
+    height: 50px;
+    border-bottom: 1px solid black;
+    & > div {
+      display: inline-block;
+      cursor: pointer;
     }
-    .Heading2 {
-        font-size: 1.5rem;
+    .editor-font {
+      position: relative;
     }
-    .Heading3 {
-        font-size: 1.17rem;
+    .font-head {
+      position: relative;
+      & > svg {
+        position: absolute;
+        right: 0;
+      }
     }
-    .Heading4 {
-        font-size: 1rem;
-    }
-    .Heading5 {
-        font-size: 0.83em;
-    }
-    .Heading6 {
-        font-size: 0.67em;
-    }
-    blockquote {
-        border-left: 2px solid gray;
-        padding-left: 12px;
-    }
-    .editor-toolbar {
+    .font-options {
+      padding: 4px 8px;
+      position: absolute;
+      // width: 80px;
+      z-index: 2;
+      background-color: white;
+      border: 1px solid gray;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      & > span {
+        width: 100%;
+        height: 30px;
+        display: inline-block;
         text-align: center;
-        padding: 10px;
-        height: 50px;
-        border-bottom: 1px solid black;
-        & > div {
-            display: inline-block;
-            cursor: pointer;
-        }
-        .editor-font {
-            position: relative;
-        }
-        .font-head {
-            position: relative;
-            & > svg {
-                position: absolute;
-                right: 0;
-            }
-        }
-        .font-options {
-            padding: 4px 8px;
-            position: absolute;
-            // width: 80px;
-            z-index: 2;
-            background-color: white;
-            border: 1px solid gray;
-            box-shadow: 0 2px 8px rgba(0,0,0,.2);
-            & > span {
-                width: 100%;
-                height: 30px;
-                display: inline-block;
-                text-align: center;
-                line-height: 30px;
-                padding: 5px 0;
-                &:hover {
-                    color: #06c;
-                }
-            }
-        }
-        .font-head {
-        }
-        .editor-format {
-            margin-bottom: 10px;
-            margin-right: 15px;
-            line-height: 30px;
-        }
-    }
-    .editor-content {
-        min-height: 200px;
-        overflow-y: auto;
-        padding: 12px 15px;
-        text-align: left;
-    }
-    pre {
-        background-color: lightgray;
-    }
-    .edit-btn {
-        z-index: 3;
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
+        line-height: 30px;
+        padding: 5px 0;
         &:hover {
-           .icon path {
-               fill:#06c;
-           }
+          color: #06c;
         }
-        .icon path {
-            fill: black;
-        }
-        .icon-click path {
-            fill: #06c;
-        }
+      }
     }
+    .font-head {
+    }
+    .editor-format {
+      margin-bottom: 10px;
+      margin-right: 15px;
+      line-height: 30px;
+    }
+  }
+  .editor-content {
+    min-height: 200px;
+    overflow-y: auto;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  pre {
+    background-color: lightgray;
+  }
+  .edit-btn {
+    z-index: 3;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    &:hover {
+      .icon path {
+        fill: #06c;
+      }
+    }
+    .icon path {
+      fill: black;
+    }
+    .icon-click path {
+      fill: #06c;
+    }
+  }
 }
 </style>
