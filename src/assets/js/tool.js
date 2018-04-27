@@ -54,7 +54,6 @@ tools.getSelection = function (element) {
     }
   }
   return { leftPosIndex: this.leftPosIndex, rightPosIndex: this.rightPosIndex, selectData: this.selectData, focusParentNode: this.focusParentNode };
-  // console.log(leftPosIndex, rightPosIndex);
 };
 
 tools.wrapTagsHtml = function (value, tag) {
@@ -68,7 +67,6 @@ tools.command = function (commandName, tag) {
 };
 // 获取选中焦点的位置
 tools.getFocusPos = function () {
-  console.log("end", tools.getSelector().select);
 };
 
 tools.setCaret = function (node, offset) {
@@ -77,7 +75,6 @@ tools.setCaret = function (node, offset) {
 
 tools.showTheTag = function (el) {
   const tagsArray = [];
-  console.log("el", el);
   const searchTags = (el) => {
     if (el.nodeType === 3 || el.getAttribute("id") !== "editor") {
       if (el.nodeType !== 3) {
@@ -114,4 +111,19 @@ tools.SetCaretPosition = function (el, pos) {
   }
 };
 
+tools.getStyles = function (el, styleName) {
+  let style = "";
+  if (window.getComputedStyle) {
+    const getStyles = window.getComputedStyle(el, null);
+    style = getStyles.getPropertyValue(styleName);
+  } else {
+    const getStyles = el.currentStyle;
+    style = getStyles.getAttribute(styleName);
+  }
+  return style;
+};
+
+tools.getFocusFormat = function (el, styleName = "text-align") {
+  return this.getStyles(el, styleName);
+};
 export default tools;

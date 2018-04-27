@@ -36,14 +36,14 @@
           </div>
           <div class="editor-format">
               <button class="edit-btn" @click.stop="addQuote">
-                  <svg class="icon" width="20px" height="20px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M832 510.208H704c0-106.048 85.952-192 192-192 35.328 0 64-28.608 64-64 0-35.328-28.672-64-64-64-176.704 0-320 143.296-320 320v256c0 70.72 57.344 128 128 128h128c70.656 0 128-57.28 128-128v-128c0-70.72-57.344-128-128-128z m-448-192c35.328 0 64-28.608 64-64 0-35.328-28.672-64-64-64-176.704 0-320 143.296-320 320v256c0 70.72 57.28 128 128 128h128c70.72 0 128-57.28 128-128v-128c0-70.72-57.28-128-128-128H192c0-106.048 85.952-192 192-192z"  /></svg>
+                  <svg class="icon" width="20px" v-bind:class="[ status.quote ? 'icon-click' : '']"  height="20px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M832 510.208H704c0-106.048 85.952-192 192-192 35.328 0 64-28.608 64-64 0-35.328-28.672-64-64-64-176.704 0-320 143.296-320 320v256c0 70.72 57.344 128 128 128h128c70.656 0 128-57.28 128-128v-128c0-70.72-57.344-128-128-128z m-448-192c35.328 0 64-28.608 64-64 0-35.328-28.672-64-64-64-176.704 0-320 143.296-320 320v256c0 70.72 57.28 128 128 128h128c70.72 0 128-57.28 128-128v-128c0-70.72-57.28-128-128-128H192c0-106.048 85.952-192 192-192z"  /></svg>
               </button>
               <button class="edit-btn" @click.stop="addCode">
                   <svg class="icon" width="20px" height="20px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#8a8a8a" d="M332.107776 298.66496c-22.177792-22.212608-58.148864-22.212608-80.318464 0L78.260224 472.185856c-22.203392 22.168576-22.203392 58.139648 0 80.309248l173.529088 173.559808c11.0848 11.067392 25.638912 16.626688 40.159232 16.626688s29.06624-5.56032 40.159232-16.626688c22.168576-22.185984 22.168576-58.148864 0-80.330752L198.719488 512.345088l133.388288-133.379072C354.276352 356.788224 354.276352 320.825344 332.107776 298.66496zM946.397184 472.185856 772.859904 298.66496c-22.177792-22.212608-58.140672-22.212608-80.309248 0-22.177792 22.160384-22.177792 58.123264 0 80.300032l133.379072 133.379072L692.550656 645.72416c-22.177792 22.181888-22.177792 58.144768 0 80.330752 11.083776 11.067392 25.621504 16.626688 40.150016 16.626688 14.52032 0 29.074432-5.56032 40.159232-16.626688l173.538304-173.559808C968.592384 530.326528 968.592384 494.354432 946.397184 472.185856zM598.665216 285.824c-29.27616-11.311104-62.152704 3.321856-73.404416 32.596992L391.593984 665.476096c-11.25888 29.284352 3.295232 62.117888 32.571392 73.411584 6.730752 2.57024 13.654016 3.811328 20.402176 3.811328 22.815744 0 44.32896-13.846528 53.009408-36.400128l133.676032-347.063296C642.504704 329.96864 627.914752 297.08288 598.665216 285.824z" /></svg>
               </button>
           </div>
       </div>
-      <div class="editor-content" id="editor" ref="content"  @click="whenClickEditor"  @keyup.once="resetFirstPara" @keyup.enter="resetStatus" contentEditable="true">
+      <div class="editor-content" id="editor" @blur="getBlurFocusNode" ref="content"  @click="whenClickEditor"  @keyup.once="resetFirstPara" @keyup.enter="whenEnterStatus" contentEditable="true">
       </div>
   </div>
 </template>
@@ -83,9 +83,11 @@ export default {
         B: "bold",
         I: "italic",
         U: "underline",
-        STRIKE: "delete"
+        STRIKE: "delete",
+        BLOCKQUOTE: "quote"
       },
-      editor: ""
+      editor: "",
+      blurFocusNode: ""
     };
   },
   components: {
@@ -118,8 +120,12 @@ export default {
       this.clickFontFormat();
       this.fontFormatNow = font.name;
       this.editor.focus();
-      tools.command("formatBlock", font.value);
-      this.setCaretBlockEnd();
+      //   tools.command("formatBlock", font.value);
+      this.setCaretBlockEnd(this.blurFocusNode);
+    },
+    getBlurFocusNode () {
+      const focusNode = tools.getSelector().select.focusNode;
+      this.blurFocusNode = focusNode;
     },
     // 加粗效果
     makeBold (event) {
@@ -146,20 +152,45 @@ export default {
       tools.command("strikeThrough");
     },
     // 左对齐
-    textLeft () {
-      this.status.left = !this.status.left;
+    textLeft (isResetLeft) {
+      if (isResetLeft) {
+        this.status.left = true;
+      } else {
+        this.status.left = false;
+        return;
+      }
       this.editor.focus();
+      this.resetTextAlign("left");
       tools.command("justifyLeft");
+    },
+    resetTextAlign (currentStatu) {
+      let statuArr = ["left", "center", "right"];
+      if (statuArr.indexOf(currentStatu) > -1) {
+        const statuIndex = statuArr.indexOf(currentStatu);
+        statuArr.splice(statuIndex, 1);
+        statuArr.forEach(statu => this.status[statu] = false);
+      }
     },
     // 文字居中
     textCenter () {
       this.status.center = !this.status.center;
+      if (!this.status.center) {
+        this.textLeft(true);
+        return;
+      }
+      this.resetTextAlign("center");
+      this.status.left = false;
       this.editor.focus();
       tools.command("justifyCenter");
     },
     // 右对齐
     textRight () {
       this.status.right = !this.status.right;
+      if (!this.status.right) {
+        this.textLeft(true);
+        return;
+      }
+      this.resetTextAlign("right");
       this.editor.focus();
       tools.command("justifyRight");
     },
@@ -170,8 +201,9 @@ export default {
       if (this.status.quote) {
         tools.command("formatBlock", "BLOCKQUOTE");
       } else {
-        tools.command("formatBlock", "p");
+        tools.command("formatBlock", "P");
       }
+      console.log("addQuote");
     },
     // 添加代码片段
     addCode () {
@@ -184,9 +216,7 @@ export default {
       }
     },
     // 将光标设置到元素的末尾
-    setCaretBlockEnd () {
-      const focusNode = tools.getSelector().select.focusNode;
-      console.log("foucsNode", focusNode);
+    setCaretBlockEnd (focusNode) {
       const offsetLen = focusNode.length;
       tools.setCaret(focusNode, offsetLen);
     },
@@ -196,34 +226,40 @@ export default {
         tools.command("formatBlock", "p");
       }
     },
-    resetStatus () {
+    whenEnterStatus () {
       Object.keys(this.status).forEach(key => {
-          if (this.status[key]) {
-              switch (key) {
-                case "bold":
-                  tools.command("bold");
-                  break;
-                case "italic":
-                  tools.command("italic");
-                  break;
-                case "underline":
-                  tools.command("underline");
-                  break;
-                case "delete":
-                  tools.command("strikeThrough");
-                  break;
-              }
+        if (this.status[key]) {
+          switch (key) {
+          case "bold":
+            tools.command("bold");
+            break;
+          case "italic":
+            tools.command("italic");
+            break;
+          case "underline":
+            tools.command("underline");
+            break;
+          case "delete":
+            tools.command("strikeThrough");
+            break;
           }
-          this.status[key] = false;
-          this.fontFormatNow = "Normal";
+        }
+        this.fontFormatNow = "Normal";
       });
+      this.resetStatus();
+    },
+    resetStatus () {
+      const notChangeStatus = ["quote"];
+      Object.keys(this.status).forEach(key => !notChangeStatus.includes(key) && (this.status[key] = false));
     },
     // 编辑器点击动作
     whenClickEditor () {
       const focusNode = tools.getSelector().select.focusNode;
       const contentTags = tools.showTheTag(focusNode);
-      Object.keys(this.status).forEach(key => this.status[key] = false);
+      const contentFormat = tools.getFocusFormat(focusNode.parentNode);
+      this.resetStatus();
       contentTags.forEach(tag => (this.status[this.tagStatusMap[tag]] = true));
+      this.status[contentFormat] = true;
     },
     changeHeading (font) {}
   }
@@ -253,8 +289,9 @@ export default {
     font-size: 0.67em;
   }
   blockquote {
-    border-left: 2px solid gray;
+    border-left: 3px solid #dfe2e5;
     padding-left: 12px;
+    color: #9aa0a7;
   }
   .editor-toolbar {
     text-align: center;
