@@ -120,7 +120,6 @@ export default {
       this.clickFontFormat();
       this.fontFormatNow = font.name;
       this.editor.focus();
-      //   tools.command("formatBlock", font.value);
       this.setCaretBlockEnd(this.blurFocusNode);
     },
     getBlurFocusNode () {
@@ -203,7 +202,6 @@ export default {
       } else {
         tools.command("formatBlock", "P");
       }
-      console.log("addQuote");
     },
     // 添加代码片段
     addCode () {
@@ -226,7 +224,15 @@ export default {
         tools.command("formatBlock", "p");
       }
     },
+    // 回车下一行的时候重置状态
     whenEnterStatus () {
+      tools.notAnotherLine();
+      if (this.fontFormatNow === "Normal") {
+        if (this.status.code) {
+          // tools.notAnotherLine();
+        }
+        return;
+      };
       Object.keys(this.status).forEach(key => {
         if (this.status[key]) {
           switch (key) {
@@ -249,7 +255,7 @@ export default {
       this.resetStatus();
     },
     resetStatus () {
-      const notChangeStatus = ["quote"];
+      const notChangeStatus = [""];
       Object.keys(this.status).forEach(key => !notChangeStatus.includes(key) && (this.status[key] = false));
     },
     // 编辑器点击动作
@@ -259,6 +265,7 @@ export default {
       const contentFormat = tools.getFocusFormat(focusNode.parentNode);
       this.resetStatus();
       contentTags.forEach(tag => (this.status[this.tagStatusMap[tag]] = true));
+      console.log("contentTags", contentTags);
       this.status[contentFormat] = true;
     },
     changeHeading (font) {}
@@ -292,6 +299,14 @@ export default {
     border-left: 3px solid #dfe2e5;
     padding-left: 12px;
     color: #9aa0a7;
+  }
+  pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
   }
   .editor-toolbar {
     text-align: center;
@@ -331,8 +346,6 @@ export default {
           color: #06c;
         }
       }
-    }
-    .font-head {
     }
     .editor-format {
       margin-bottom: 10px;

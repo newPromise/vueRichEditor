@@ -9,30 +9,34 @@ const tools = {
 };
 
 tools.getSelector = function (element) {
-  let text;
-  let range;
   let select;
-  let rect;
   if (window.getSelection) {
-    // 对于 window.getSelection 方法
-    // 表示用户选择的文本范围或者光标位置
     select = window.getSelection();
-    // document.execCommand("defaultParagraphSeparator", false, "");
-    text = select.toString();
-    range = select.getRangeAt(0).cloneRange();
-    range.collapse(true);
-    rect = range.getClientRects()[0];
-    // range = select.getRangeAt(0);
   } else if (document.selection) {
-    range = document.selection.createRange();
-    text = range.text;
+    select = document.selection;
   }
   return {
-    text,
-    select,
-    range,
-    rect
+    select
   };
+};
+
+// 换行的时候取消生成的新的一行
+tools.notAnotherLine = function () {
+  const selection = tools.getSelector().select;
+  const range = document.createRange();
+  // const textNode = document.createTextNode("\u00a0");
+  // const br = document.createElement("br");
+  // range.insertNode(br);
+  // range.collapse(false);
+  // range.insertNode(textNode);
+  // range.selectNodeContents(textNode);
+  // selection.removeAllRanges();
+  // selection.addRange(range);
+  range.selectNode(selection.focusNode);
+  // selection.focusNode.replace(/<pre>/gi, "br");
+  console.log("range", range, selection);
+  // range.insertNode(br);
+  // range.deleteContents();
 };
 
 // 替换选中的文字
@@ -63,7 +67,7 @@ tools.wrapTagsHtml = function (value, tag) {
 };
 
 tools.command = function (commandName, tag) {
-  return document.execCommand(commandName, true, tag);
+  return document.execCommand(commandName, false, tag);
 };
 // 获取选中焦点的位置
 tools.getFocusPos = function () {
