@@ -49,7 +49,6 @@
 </template>
 
 <script>
-import textAlign from "./textAlign";
 import tools from "../assets/js/tool.js";
 export default {
   data () {
@@ -90,10 +89,6 @@ export default {
       blurFocusNode: ""
     };
   },
-  components: {
-    textAlign
-  },
-  computed: {},
   mounted () {
     this.init();
   },

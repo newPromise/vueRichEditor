@@ -1,13 +1,17 @@
 <template>
   <div class="hello">
-    <vue-editor v-model="content"></vue-editor>
-    <rich-editor></rich-editor>
+    <!-- <vue-editor v-model="content"></vue-editor> -->
+    <!-- <rich-editor></rich-editor> -->
+    <bullet-screen>
+      <div class="vedio"></div>
+    </bullet-screen>
   </div>
 </template>
 
 <script>
 import { VueEditor, Quill } from "vue2-editor";
 import richEditor from "./richEditor";
+import bulletScreen from "./bulletScreen";
 export default {
   name: "HelloWorld",
   data () {
@@ -22,13 +26,19 @@ export default {
   components: {
     richEditor,
     VueEditor,
-    Quill
+    Quill,
+    bulletScreen
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.vedio {
+  width: 500px;
+  height: 300px;
+  margin: 0 auto;
+}
 h1, h2 {
   font-weight: normal;
 }

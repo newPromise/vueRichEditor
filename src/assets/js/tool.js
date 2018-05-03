@@ -24,14 +24,6 @@ tools.getSelector = function (element) {
 tools.notAnotherLine = function () {
   const selection = tools.getSelector().select;
   const range = document.createRange();
-  // const textNode = document.createTextNode("\u00a0");
-  // const br = document.createElement("br");
-  // range.insertNode(br);
-  // range.collapse(false);
-  // range.insertNode(textNode);
-  // range.selectNodeContents(textNode);
-  // selection.removeAllRanges();
-  // selection.addRange(range);
   range.selectNode(selection.focusNode);
   // selection.focusNode.replace(/<pre>/gi, "br");
   console.log("range", range, selection);
