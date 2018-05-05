@@ -119,6 +119,12 @@ tools.getStyles = function (el, styleName) {
   return style;
 };
 
+tools.setStyles = function (el, styleName, styleValue) {
+  if (el) {
+    el.style[styleName] = styleValue;
+  }
+};
+
 tools.getFocusFormat = function (el, styleName = "text-align") {
   return this.getStyles(el, styleName);
 };

@@ -38,6 +38,7 @@ export default {
   width: 500px;
   height: 300px;
   margin: 0 auto;
+  background-color: lightblue;
 }
 h1, h2 {
   font-weight: normal;
