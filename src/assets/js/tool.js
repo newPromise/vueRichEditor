@@ -116,6 +116,9 @@ tools.getStyles = function (el, styleName) {
     const getStyles = el.currentStyle;
     style = getStyles.getAttribute(styleName);
   }
+  if (style.indexOf("px") > 0) {
+    style = +style.split("px")[0];
+  }
   return style;
 };
 

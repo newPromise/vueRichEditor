@@ -38,6 +38,7 @@
 
 <script type="text/ecmascript-6">
 import tools from "@/assets/js/tool";
+import colorPicker from "./colorPicker";
 export default {
   name: "bulletScreen",
   data () {
@@ -71,21 +72,20 @@ export default {
     this.initStyle();
   },
   components: {
+    colorPicker
   },
   methods: {
     initStyle () {
-      this.maskStyle.height = tools.getStyles(this.$refs.content, "height");
-      this.maskStyle.width = tools.getStyles(this.$refs.content, "width");
+      this.maskStyle.height = `${tools.getStyles(this.$refs.content, "height")}px`;
+      this.maskStyle.width = `${tools.getStyles(this.$refs.content, "width")}px`;
     },
     // 发送弹幕
     sendMsg () {
       if (this.danmakuMsg.trim()) {
-        // document.getElementsByClassName("danmaku-mask")[0].innerHTML += `<span class="active">${this.danmakuMsg}</span>`;
         const timestamp = Date.parse(new Date());
         const msg = this.danmakuMsg;
-        const top = Math.random() * this.maskStyle.height;
+        const top = Math.random() * (+this.maskStyle.height.split("px")[0]);
         const danmakuMsgStyle = Object.assign({}, this.danmakuMsgStyle);
-        console.log("top", top);
         this.pushDamakuPool({ timestamp, msg, startSlide: false, top, danmakuMsgStyle });
         this.danmakuMsg = "";
         this.scrollMsg();
@@ -124,7 +124,6 @@ export default {
     scrollMsg () {
       if (this.damakuPool.length > 0) {
         let firstMsgTime = this.damakuPool[0].timestamp;
-        console.log("第一个时间的time", firstMsgTime);
         if (firstMsgTime !== 0) {
           this.baseTime = firstMsgTime;
           this.damakuPool[0].timestamp = 0;
