@@ -5,6 +5,7 @@
     <bullet-screen>
       <div class="vedio"></div>
     </bullet-screen>
+    <color-picker class="color-picker" @select-color="call"></color-picker>
   </div>
 </template>
 
@@ -12,6 +13,7 @@
 import { VueEditor, Quill } from "vue2-editor";
 import richEditor from "./richEditor";
 import bulletScreen from "./bulletScreen";
+import colorPicker from "./colorPicker";
 export default {
   name: "HelloWorld",
   data () {
@@ -23,17 +25,28 @@ export default {
   created () {
     console.log("", VueEditor);
   },
+  methods: {
+    call (bg) {
+      console.log(bg);
+    }
+  },
   components: {
     richEditor,
     VueEditor,
     Quill,
-    bulletScreen
+    bulletScreen,
+    colorPicker
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.color-picker {
+  margin: auto;
+  margin-top: 50px;
+  width: 500px;
+}
 .vedio {
   width: 500px;
   height: 300px;
